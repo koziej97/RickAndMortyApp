@@ -3,7 +3,10 @@ package com.example.rickandmortyapp.ui.characters
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -13,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.rickandmortyapp.R
@@ -23,7 +28,10 @@ import com.example.rickandmortyapp.ui.characters.components.NavigationBarCustom
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharactersScreen() {
+fun CharactersScreen(
+    darkTheme: Boolean,
+    onThemeUpdated: () -> Unit
+) {
     val viewModel: CharactersScreenViewModel = hiltViewModel()
     val favoritesUiState by viewModel.favoritesUiState
     val allCharactersPagingItems = viewModel.allCharactersFlow.collectAsLazyPagingItems()
@@ -41,6 +49,25 @@ fun CharactersScreen() {
                 ),
                 title = {
                     Text(stringResource(R.string.rick_and_morty_characters))
+                },
+                actions = {
+                    IconButton(onClick = {
+                        onThemeUpdated()
+                    }) {
+                        if (darkTheme) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.sun),
+                                contentDescription = "Sun Icon",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.moon),
+                                contentDescription = "Moon Icon",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                 }
             )
         },
