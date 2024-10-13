@@ -1,5 +1,8 @@
 package com.example.rickandmortyapp.data.di
 
+import com.example.rickandmortyapp.data.local.LocalDataSource
+import com.example.rickandmortyapp.data.local.LocalDataSourceImpl
+import com.example.rickandmortyapp.data.local.database.CharactersDao
 import com.example.rickandmortyapp.data.remote.ApiService
 import com.example.rickandmortyapp.data.remote.RemoteDataSource
 import com.example.rickandmortyapp.data.remote.RemoteDataSourceImpl
@@ -23,9 +26,16 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideLocalDataSource(charactersDao: CharactersDao): LocalDataSource {
+        return LocalDataSourceImpl(charactersDao)
+    }
+
+    @Provides
+    @Singleton
     fun provideCharactersRepository(
-        remoteDataSource: RemoteDataSource
+        remoteDataSource: RemoteDataSource,
+        localDataSource: LocalDataSource
     ): CharactersRepository {
-        return CharactersRepositoryImpl(remoteDataSource)
+        return CharactersRepositoryImpl(remoteDataSource, localDataSource)
     }
 }

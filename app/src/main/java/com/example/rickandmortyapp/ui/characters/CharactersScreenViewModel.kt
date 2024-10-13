@@ -31,8 +31,10 @@ class CharactersScreenViewModel @Inject constructor(
             val updatedCharacter: Character?
             if (character.isFavorite) {
                 updatedCharacter = character.copy(isFavorite = false)
+                charactersRepository.removeFromFavorites(updatedCharacter)
             } else {
                 updatedCharacter = character.copy(isFavorite = true)
+                charactersRepository.addToFavorites(updatedCharacter)
             }
             _allCharactersFlow.value = _allCharactersFlow.value.updateCharacter(updatedCharacter)
         }
