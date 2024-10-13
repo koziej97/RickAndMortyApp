@@ -1,7 +1,9 @@
 package com.example.rickandmortyapp.domain.repository
 
-import com.example.rickandmortyapp.data.remote.model.CharacterDTO
+import androidx.paging.PagingData
+import com.example.rickandmortyapp.domain.model.Character
+import kotlinx.coroutines.flow.Flow
 
 interface CharactersRepository {
-    suspend fun getAllCharacters(): Result<List<CharacterDTO>>
+    fun getCharactersPagingSource(): Flow<PagingData<Character>>
 }

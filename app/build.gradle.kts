@@ -77,4 +77,8 @@ dependencies {
     // Retrofit
     implementation(libs.squareup.retrofit)
     implementation(libs.retrofit2.converter.gson)
+
+    // Paging
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
 }
