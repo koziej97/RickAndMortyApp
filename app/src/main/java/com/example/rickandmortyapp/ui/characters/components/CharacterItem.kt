@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -75,7 +76,8 @@ fun CharacterItem(
                 }) {
                     Icon(
                         imageVector = if (character.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = null
+                        contentDescription = if (character.isFavorite) "Favorite" else "Not Favorite",
+                        modifier = Modifier.testTag("FavoriteIcon_${character.name}")
                     )
                 }
             }
