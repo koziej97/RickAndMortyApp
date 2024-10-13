@@ -17,11 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.example.rickandmortyapp.R
+import com.example.rickandmortyapp.ui.characters.components.CharacterItem
+import com.example.rickandmortyapp.ui.characters.components.ErrorMessage
+import com.example.rickandmortyapp.ui.characters.components.PageLoader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +47,7 @@ fun CharactersScreen() {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Rick and Morty Characters")
+                    Text(stringResource(R.string.rick_and_morty_characters))
                 }
             )
         }
@@ -57,25 +62,26 @@ fun CharactersScreen() {
                     key = allCharactersPagingItems.itemKey { it.id }
                 ) { index ->
                     allCharactersPagingItems[index]?.let { character ->
-                        Text(character.name)
+                        CharacterItem(
+                            character = character,
+                            onClick = { viewModel.toggleFavorite(it) }
+                        )
                     }
                 }
                 allCharactersPagingItems.apply {
                     when {
                         loadState.refresh is LoadState.Loading -> {
                             item {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp)
-                                        .wrapContentWidth(Alignment.CenterHorizontally)
-                                )
+                                PageLoader(modifier = Modifier.fillParentMaxSize())
                             }
                         }
 
                         loadState.refresh is LoadState.Error -> {
                             item {
-                                Text("Error getting data. Please check your internet connection and try again.")
+                                ErrorMessage(
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    message = stringResource(R.string.error_getting_data),
+                                    onClickRetry = { retry() })
                             }
                         }
 
@@ -92,7 +98,10 @@ fun CharactersScreen() {
 
                         loadState.append is LoadState.Error -> {
                             item {
-                                Text("Error getting data. Please check your internet connection and try again.")
+                                ErrorMessage(
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    message = stringResource(R.string.error_getting_data),
+                                    onClickRetry = { retry() })
                             }
                         }
                     }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">RickAndMortyApp</string>
+    <string name="error_getting_data">Error getting data. Please check your internet connection and try again.</string>
+    <string name="rick_and_morty_characters">Rick and Morty Characters</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading</string>
 </resources>

@@ -11,6 +11,7 @@ hiltNavigationCompose = "1.2.0"
 converterGsonVersion = "2.11.0"
 squareupRetrofit = "2.11.0"
 pagingRuntimeKtx = "3.3.2"
+coilCompose = "3.0.0-rc01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,5 +36,7 @@ retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", v
 squareup-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingRuntimeKtx" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 
 
