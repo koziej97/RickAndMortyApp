@@ -1,4 +1,4 @@
-package com.example.rickandmortyapp.ui.characters.uiStates
+package com.example.rickandmortyapp.ui.characters.allCharacters.uiStates
 
 import com.example.rickandmortyapp.domain.model.Character
 

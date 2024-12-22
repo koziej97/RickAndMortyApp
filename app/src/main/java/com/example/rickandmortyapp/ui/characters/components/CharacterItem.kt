@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +33,8 @@ import com.example.rickandmortyapp.domain.model.Character
 @Composable
 fun CharacterItem(
     character: Character,
-    onClick: (Character) -> Unit
+    onFavoriteClick: (Character) -> Unit,
+    onItemClick: (Int) -> Unit
 ) {
     AnimatedVisibility(
         visible = true,
@@ -47,7 +49,9 @@ fun CharacterItem(
             shape = RoundedCornerShape(8.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onItemClick(character.id) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
@@ -72,7 +76,7 @@ fun CharacterItem(
                 }
                 Spacer(modifier = Modifier.size(8.dp))
                 IconButton(onClick = {
-                    onClick(character)
+                    onFavoriteClick(character)
                 }) {
                     Icon(
                         imageVector = if (character.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,

@@ -1,4 +1,4 @@
-package com.example.rickandmortyapp.ui.characters
+package com.example.rickandmortyapp.ui.characters.allCharacters
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -12,7 +12,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.rickandmortyapp.domain.repository.CharactersRepository
 import com.example.rickandmortyapp.domain.usecase.UpdateCharactersFavoriteStatus
-import com.example.rickandmortyapp.ui.characters.uiStates.FavoriteCharactersUiState
+import com.example.rickandmortyapp.ui.characters.allCharacters.uiStates.FavoriteCharactersUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CharactersScreenViewModel @Inject constructor(
+class AllCharactersScreenViewModel @Inject constructor(
     private val charactersRepository: CharactersRepository,
     private val updateCharactersFavoriteStatus: UpdateCharactersFavoriteStatus
 ): ViewModel() {
@@ -30,7 +30,8 @@ class CharactersScreenViewModel @Inject constructor(
     private val _allCharactersFlow = MutableStateFlow<PagingData<Character>>(PagingData.empty())
     val allCharactersFlow: StateFlow<PagingData<Character>> = _allCharactersFlow
 
-    private val _favoritesUiState = mutableStateOf<FavoriteCharactersUiState>(FavoriteCharactersUiState.Loading)
+    private val _favoritesUiState = mutableStateOf<FavoriteCharactersUiState>(
+        FavoriteCharactersUiState.Loading)
     val favoritesUiState: State<FavoriteCharactersUiState> = _favoritesUiState
 
     var isShowingFavorites by mutableStateOf(false)

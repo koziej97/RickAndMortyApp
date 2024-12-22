@@ -1,4 +1,4 @@
-package com.example.rickandmortyapp.ui.characters
+package com.example.rickandmortyapp.ui.characters.allCharacters
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,11 +28,12 @@ import com.example.rickandmortyapp.ui.characters.components.NavigationBarCustom
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharactersScreen(
+fun AllCharactersScreen(
     darkTheme: Boolean,
-    onThemeUpdated: () -> Unit
+    onThemeUpdated: () -> Unit,
+    onCharacterClick: (Int) -> Unit
 ) {
-    val viewModel: CharactersScreenViewModel = hiltViewModel()
+    val viewModel: AllCharactersScreenViewModel = hiltViewModel()
     val favoritesUiState by viewModel.favoritesUiState
     val allCharactersPagingItems = viewModel.allCharactersFlow.collectAsLazyPagingItems()
 
@@ -86,11 +87,14 @@ fun CharactersScreen(
             if (viewModel.isShowingFavorites) {
                 FavoriteCharactersLazyList(
                     favoritesUiState = favoritesUiState,
-                    toggleFavoriteButton = viewModel::toggleFavorite)
+                    toggleFavoriteButton = viewModel::toggleFavorite,
+                    onItemClick = onCharacterClick
+                )
             } else {
                 AllCharactersLazyList(
                     charactersPagingItems = allCharactersPagingItems,
-                    toggleFavoriteButton = viewModel::toggleFavorite
+                    toggleFavoriteButton = viewModel::toggleFavorite,
+                    onItemClick = onCharacterClick
                 )
             }
         }

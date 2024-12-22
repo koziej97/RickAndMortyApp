@@ -14,12 +14,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.domain.model.Character
-import com.example.rickandmortyapp.ui.characters.uiStates.FavoriteCharactersUiState
+import com.example.rickandmortyapp.ui.characters.allCharacters.uiStates.FavoriteCharactersUiState
 
 @Composable
 fun FavoriteCharactersLazyList(
     favoritesUiState: FavoriteCharactersUiState,
-    toggleFavoriteButton: (Character) -> Unit
+    toggleFavoriteButton: (Character) -> Unit,
+    onItemClick: (Int) -> Unit
 ) {
     when (favoritesUiState) {
         is FavoriteCharactersUiState.Loading -> {
@@ -44,7 +45,8 @@ fun FavoriteCharactersLazyList(
                 items(items = characters ?: emptyList(), key = { it.id }) { item ->
                     CharacterItem(
                         character = item,
-                        onClick = { toggleFavoriteButton(item) }
+                        onFavoriteClick = { toggleFavoriteButton(item) },
+                        onItemClick = onItemClick
                     )
                 }
             }
