@@ -52,4 +52,13 @@ class CharactersRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getCharacterData(id: Int): Result<Character> {
+        return try {
+            val result = remoteDataSource.fetchCharacter(id)
+            result.map { it.toCharacter() }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }
