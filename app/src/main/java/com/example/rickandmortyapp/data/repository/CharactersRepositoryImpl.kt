@@ -19,7 +19,7 @@ class CharactersRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ): CharactersRepository {
 
-    override fun getCharactersPagingSource(): Flow<PagingData<Character>> {
+    override fun getCharactersFlow(): Flow<PagingData<Character>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
             pagingSourceFactory = { CharacterPagingSource(remoteDataSource) }

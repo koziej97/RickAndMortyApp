@@ -11,6 +11,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.rickandmortyapp.domain.repository.CharactersRepository
+import com.example.rickandmortyapp.domain.usecase.UpdateCharactersFavoriteStatus
 import com.example.rickandmortyapp.ui.characters.uiStates.FavoriteCharactersUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CharactersScreenViewModel @Inject constructor(
-    private val charactersRepository: CharactersRepository
+    private val charactersRepository: CharactersRepository,
+    private val updateCharactersFavoriteStatus: UpdateCharactersFavoriteStatus
 ): ViewModel() {
 
     private val _allCharactersFlow = MutableStateFlow<PagingData<Character>>(PagingData.empty())
@@ -78,12 +80,10 @@ class CharactersScreenViewModel @Inject constructor(
 
     private fun fetchAllCharacters() {
         viewModelScope.launch {
-            charactersRepository.getCharactersPagingSource()
+            charactersRepository.getCharactersFlow()
                 .cachedIn(viewModelScope)
                 .combine(favoritesFlow) { pagingData, favoriteList ->
-                    pagingData.map { character ->
-                        character.copy(isFavorite = favoriteList.any { it.id == character.id })
-                    }
+                    updateCharactersFavoriteStatus.execute(pagingData, favoriteList)
                 }
                 .collectLatest { updatedPagingData ->
                     _allCharactersFlow.value = updatedPagingData
