@@ -25,7 +25,7 @@ import javax.inject.Inject
 class AllCharactersScreenViewModel @Inject constructor(
     private val charactersRepository: CharactersRepository,
     private val updateCharactersFavoriteStatus: UpdateCharactersFavoriteStatus
-): ViewModel() {
+) : ViewModel() {
 
     private val _allCharactersFlow = MutableStateFlow<PagingData<Character>>(PagingData.empty())
     val allCharactersFlow: StateFlow<PagingData<Character>> = _allCharactersFlow
@@ -37,16 +37,21 @@ class AllCharactersScreenViewModel @Inject constructor(
     var isShowingFavorites by mutableStateOf(false)
         private set
 
-    fun fetchData() {
-        fetchFavorites()
-        fetchAllCharacters()
+    fun handleIntent(intent: AllCharactersIntent) {
+        viewModelScope.launch {
+            when(intent) {
+                is AllCharactersIntent.LoadCharacters -> fetchData()
+                is AllCharactersIntent.ShowAllCharacters -> showAllCharacters()
+                is AllCharactersIntent.ShowFavoritesCharacters -> showFavoritesCharacters()
+            }
+        }
     }
 
-    fun showAllCharacters() {
+    private fun showAllCharacters() {
         isShowingFavorites = false
     }
 
-    fun showFavoritesCharacters() {
+    private fun showFavoritesCharacters() {
         isShowingFavorites = true
     }
 
@@ -62,6 +67,11 @@ class AllCharactersScreenViewModel @Inject constructor(
             }
             _allCharactersFlow.value = _allCharactersFlow.value.updateCharacter(updatedCharacter)
         }
+    }
+
+    private fun fetchData() {
+        fetchFavorites()
+        fetchAllCharacters()
     }
 
     private val favoritesFlow = charactersRepository.getFavorites()

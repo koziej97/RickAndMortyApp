@@ -31,14 +31,14 @@ import com.example.rickandmortyapp.ui.characters.components.NavigationBarCustom
 fun AllCharactersScreen(
     darkTheme: Boolean,
     onThemeUpdated: () -> Unit,
-    onCharacterClick: (Int) -> Unit
+    onCharacterClick: (Int, String) -> Unit
 ) {
     val viewModel: AllCharactersScreenViewModel = hiltViewModel()
     val favoritesUiState by viewModel.favoritesUiState
     val allCharactersPagingItems = viewModel.allCharactersFlow.collectAsLazyPagingItems()
 
     LaunchedEffect(true) {
-        viewModel.fetchData()
+        viewModel.handleIntent(AllCharactersIntent.LoadCharacters)
     }
 
     Scaffold(
@@ -75,8 +75,8 @@ fun AllCharactersScreen(
         bottomBar = {
             NavigationBarCustom(
                 isShowingFavorites = viewModel.isShowingFavorites,
-                showAllCharacters = { viewModel.showAllCharacters() },
-                showFavoritesCharacters = { viewModel.showFavoritesCharacters() }
+                showAllCharacters = { viewModel.handleIntent(AllCharactersIntent.ShowAllCharacters) },
+                showFavoritesCharacters = { viewModel.handleIntent(AllCharactersIntent.ShowFavoritesCharacters) }
             )
         }
     ) { innerPadding ->

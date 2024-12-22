@@ -34,7 +34,7 @@ import com.example.rickandmortyapp.domain.model.Character
 fun CharacterItem(
     character: Character,
     onFavoriteClick: (Character) -> Unit,
-    onItemClick: (Int) -> Unit
+    onItemClick: (Int, String) -> Unit
 ) {
     AnimatedVisibility(
         visible = true,
@@ -51,7 +51,7 @@ fun CharacterItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onItemClick(character.id) },
+                    .clickable { onItemClick(character.id, character.name) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(

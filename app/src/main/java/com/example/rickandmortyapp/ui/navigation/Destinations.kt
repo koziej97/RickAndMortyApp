@@ -8,5 +8,8 @@ object Destinations {
     object AllCharacters
 
     @Serializable
-    data class CharacterDetails(val id: Int)
+    data class CharacterDetails(
+        val id: Int,
+        val name: String
+    )
 }

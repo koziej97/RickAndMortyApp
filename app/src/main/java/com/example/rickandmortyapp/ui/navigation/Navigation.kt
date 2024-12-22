@@ -22,9 +22,9 @@ fun Navigation(
             AllCharactersScreen(
                 darkTheme = darkTheme,
                 onThemeUpdated = onThemeUpdated,
-                onCharacterClick = { id ->
+                onCharacterClick = { id, name ->
                     navController.navigate(
-                        Destinations.CharacterDetails(id)
+                        Destinations.CharacterDetails(id, name)
                     )
                 }
             )
@@ -33,7 +33,9 @@ fun Navigation(
         composable<Destinations.CharacterDetails> {
             val args = it.toRoute<Destinations.CharacterDetails>()
             CharacterDetailsScreen(
-                id = args.id,
+                characterId = args.id,
+                characterName = args.name,
+                onBackPress = { navController.popBackStack() }
             )
         }
     }

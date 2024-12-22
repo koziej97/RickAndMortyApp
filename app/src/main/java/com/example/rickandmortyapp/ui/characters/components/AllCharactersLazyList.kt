@@ -20,7 +20,7 @@ import com.example.rickandmortyapp.domain.model.Character
 fun AllCharactersLazyList(
     charactersPagingItems: LazyPagingItems<Character>,
     toggleFavoriteButton: (Character) -> Unit,
-    onItemClick: (Int) -> Unit
+    onItemClick: (Int, String) -> Unit
 ) {
     LazyColumn {
         items(

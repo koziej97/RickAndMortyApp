@@ -20,7 +20,7 @@ import com.example.rickandmortyapp.ui.characters.allCharacters.uiStates.Favorite
 fun FavoriteCharactersLazyList(
     favoritesUiState: FavoriteCharactersUiState,
     toggleFavoriteButton: (Character) -> Unit,
-    onItemClick: (Int) -> Unit
+    onItemClick: (Int, String) -> Unit
 ) {
     when (favoritesUiState) {
         is FavoriteCharactersUiState.Loading -> {
