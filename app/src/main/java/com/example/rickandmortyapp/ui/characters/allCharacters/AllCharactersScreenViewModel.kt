@@ -43,6 +43,7 @@ class AllCharactersScreenViewModel @Inject constructor(
                 is AllCharactersIntent.LoadCharacters -> fetchData()
                 is AllCharactersIntent.ShowAllCharacters -> showAllCharacters()
                 is AllCharactersIntent.ShowFavoritesCharacters -> showFavoritesCharacters()
+                is AllCharactersIntent.ToggleFavorite -> toggleFavorite(intent.character)
             }
         }
     }
@@ -55,7 +56,7 @@ class AllCharactersScreenViewModel @Inject constructor(
         isShowingFavorites = true
     }
 
-    fun toggleFavorite(character: Character) {
+    private fun toggleFavorite(character: Character) {
         viewModelScope.launch {
             val updatedCharacter: Character?
             if (character.isFavorite) {

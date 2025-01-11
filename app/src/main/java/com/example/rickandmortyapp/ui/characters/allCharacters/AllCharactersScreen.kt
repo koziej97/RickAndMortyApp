@@ -75,8 +75,10 @@ fun AllCharactersScreen(
         bottomBar = {
             NavigationBarCustom(
                 isShowingFavorites = viewModel.isShowingFavorites,
-                showAllCharacters = { viewModel.handleIntent(AllCharactersIntent.ShowAllCharacters) },
-                showFavoritesCharacters = { viewModel.handleIntent(AllCharactersIntent.ShowFavoritesCharacters) }
+                showAllCharacters = {
+                    viewModel.handleIntent(AllCharactersIntent.ShowAllCharacters) },
+                showFavoritesCharacters = {
+                    viewModel.handleIntent(AllCharactersIntent.ShowFavoritesCharacters) }
             )
         }
     ) { innerPadding ->
@@ -87,13 +89,15 @@ fun AllCharactersScreen(
             if (viewModel.isShowingFavorites) {
                 FavoriteCharactersLazyList(
                     favoritesUiState = favoritesUiState,
-                    toggleFavoriteButton = viewModel::toggleFavorite,
+                    toggleFavoriteButton = {
+                        viewModel.handleIntent(AllCharactersIntent.ToggleFavorite(it)) },
                     onItemClick = onCharacterClick
                 )
             } else {
                 AllCharactersLazyList(
                     charactersPagingItems = allCharactersPagingItems,
-                    toggleFavoriteButton = viewModel::toggleFavorite,
+                    toggleFavoriteButton = {
+                        viewModel.handleIntent(AllCharactersIntent.ToggleFavorite(it)) },
                     onItemClick = onCharacterClick
                 )
             }
