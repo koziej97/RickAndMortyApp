@@ -1,9 +1,5 @@
 package com.example.rickandmortyapp.ui.characters.allCharacters
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.example.rickandmortyapp.domain.model.Character
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +8,8 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.rickandmortyapp.domain.repository.CharactersRepository
 import com.example.rickandmortyapp.domain.usecase.UpdateCharactersFavoriteStatus
-import com.example.rickandmortyapp.ui.characters.allCharacters.uiStates.FavoriteCharactersUiState
+import com.example.rickandmortyapp.ui.characters.allCharacters.viewStates.AllCharactersViewState
+import com.example.rickandmortyapp.ui.characters.allCharacters.viewStates.FavoriteCharactersViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,15 +24,38 @@ class AllCharactersScreenViewModel @Inject constructor(
     private val updateCharactersFavoriteStatus: UpdateCharactersFavoriteStatus
 ) : ViewModel() {
 
-    private val _allCharactersFlow = MutableStateFlow<PagingData<Character>>(PagingData.empty())
-    val allCharactersFlow: StateFlow<PagingData<Character>> = _allCharactersFlow
+    private val _viewState = MutableStateFlow(AllCharactersViewState())
+    val viewState: StateFlow<AllCharactersViewState> = _viewState
 
-    private val _favoritesUiState = mutableStateOf<FavoriteCharactersUiState>(
-        FavoriteCharactersUiState.Loading)
-    val favoritesUiState: State<FavoriteCharactersUiState> = _favoritesUiState
+    private val allCharactersFlow: MutableStateFlow<PagingData<Character>> =
+        MutableStateFlow(PagingData.empty())
 
-    var isShowingFavorites by mutableStateOf(false)
-        private set
+    private val favoritesUiState: MutableStateFlow<FavoriteCharactersViewState> =
+        MutableStateFlow(FavoriteCharactersViewState.Loading)
+
+    private val isShowingFavorites: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    init {
+        combineStateFlows()
+    }
+
+    private fun combineStateFlows() {
+        viewModelScope.launch {
+            combine(
+                allCharactersFlow,
+                favoritesUiState,
+                isShowingFavorites
+            ) { _, favoritesState, isShowingFavorites ->
+                AllCharactersViewState(
+                    allCharacters = allCharactersFlow,
+                    favoritesState = favoritesState,
+                    isShowingFavorites = isShowingFavorites
+                )
+            }.collect { newState ->
+                _viewState.value = newState
+            }
+        }
+    }
 
     fun handleIntent(intent: AllCharactersIntent) {
         viewModelScope.launch {
@@ -49,11 +69,11 @@ class AllCharactersScreenViewModel @Inject constructor(
     }
 
     private fun showAllCharacters() {
-        isShowingFavorites = false
+        isShowingFavorites.value = false
     }
 
     private fun showFavoritesCharacters() {
-        isShowingFavorites = true
+        isShowingFavorites.value = true
     }
 
     private fun toggleFavorite(character: Character) {
@@ -66,7 +86,7 @@ class AllCharactersScreenViewModel @Inject constructor(
                 updatedCharacter = character.copy(isFavorite = true)
                 charactersRepository.addToFavorites(updatedCharacter)
             }
-            _allCharactersFlow.value = _allCharactersFlow.value.updateCharacter(updatedCharacter)
+            allCharactersFlow.value = allCharactersFlow.value.updateCharacter(updatedCharacter)
         }
     }
 
@@ -79,12 +99,12 @@ class AllCharactersScreenViewModel @Inject constructor(
 
     private fun fetchFavorites() {
         viewModelScope.launch {
-            _favoritesUiState.value = FavoriteCharactersUiState.Loading
+            favoritesUiState.value = FavoriteCharactersViewState.Loading
             favoritesFlow.collect {
                 if (it.isEmpty()) {
-                    _favoritesUiState.value = FavoriteCharactersUiState.Empty
+                    favoritesUiState.value = FavoriteCharactersViewState.Empty
                 } else {
-                    _favoritesUiState.value = FavoriteCharactersUiState.Success(it)
+                    favoritesUiState.value = FavoriteCharactersViewState.Success(it)
                 }
             }
         }
@@ -98,7 +118,7 @@ class AllCharactersScreenViewModel @Inject constructor(
                     updateCharactersFavoriteStatus.execute(pagingData, favoriteList)
                 }
                 .collectLatest { updatedPagingData ->
-                    _allCharactersFlow.value = updatedPagingData
+                    allCharactersFlow.value = updatedPagingData
                 }
         }
     }

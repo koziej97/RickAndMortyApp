@@ -19,12 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.ui.characters.components.ErrorMessage
 import com.example.rickandmortyapp.ui.characters.components.PageLoader
+import com.example.rickandmortyapp.ui.characters.utils.createCharacterForPreview
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharacterDetailsScreen(
     characterId: Int,
@@ -39,6 +40,24 @@ fun CharacterDetailsScreen(
         viewModel.handleIntent(CharacterIntent.LoadCharacter(characterId))
     }
 
+    CharacterDetailsScreenContent(
+        viewState = viewState,
+        onBackPress = onBackPress,
+        characterId = characterId,
+        characterName = characterName,
+        onLoadCharacter = { viewModel.handleIntent(CharacterIntent.LoadCharacter(it)) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CharacterDetailsScreenContent(
+    viewState: CharacterViewState,
+    onBackPress: () -> Boolean,
+    characterId: Int,
+    characterName: String,
+    onLoadCharacter: (Int) -> Unit,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,16 +92,28 @@ fun CharacterDetailsScreen(
                     ErrorMessage(
                         modifier = Modifier.fillMaxSize(),
                         message = stringResource(R.string.error_getting_data),
-                        onClickRetry = {
-                            viewModel.handleIntent(CharacterIntent.LoadCharacter(characterId))
-                        }
+                        onClickRetry = { onLoadCharacter(characterId) }
                     )
                 }
                 is CharacterViewState.Success -> {
-                    val character = (viewState as CharacterViewState.Success).character
+                    val character = viewState.character
                     Text(character.name)
                 }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CharacterDetailsScreenPreview() {
+    CharacterDetailsScreenContent(
+        viewState = CharacterViewState.Success(
+            createCharacterForPreview()
+        ),
+        onBackPress = { false },
+        characterId = 1,
+        characterName = "Rick Sanchez",
+        onLoadCharacter = {}
+    )
 }

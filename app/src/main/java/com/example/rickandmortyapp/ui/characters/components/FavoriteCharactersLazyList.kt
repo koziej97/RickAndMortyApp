@@ -11,22 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.domain.model.Character
-import com.example.rickandmortyapp.ui.characters.allCharacters.uiStates.FavoriteCharactersUiState
+import com.example.rickandmortyapp.ui.characters.allCharacters.viewStates.FavoriteCharactersViewState
+import com.example.rickandmortyapp.ui.characters.utils.createListOfCharactersForPreview
 
 @Composable
 fun FavoriteCharactersLazyList(
-    favoritesUiState: FavoriteCharactersUiState,
+    favoritesUiState: FavoriteCharactersViewState,
     toggleFavoriteButton: (Character) -> Unit,
     onItemClick: (Int, String) -> Unit
 ) {
     when (favoritesUiState) {
-        is FavoriteCharactersUiState.Loading -> {
+        is FavoriteCharactersViewState.Loading -> {
             PageLoader(modifier = Modifier.fillMaxSize())
         }
-        is FavoriteCharactersUiState.Empty -> {
+        is FavoriteCharactersViewState.Empty -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -39,7 +41,7 @@ fun FavoriteCharactersLazyList(
                 )
             }
         }
-        is FavoriteCharactersUiState.Success -> {
+        is FavoriteCharactersViewState.Success -> {
             val characters = favoritesUiState.characters
             LazyColumn {
                 items(items = characters ?: emptyList(), key = { it.id }) { item ->
@@ -52,4 +54,16 @@ fun FavoriteCharactersLazyList(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FavoriteCharactersLazyListPreview() {
+    FavoriteCharactersLazyList(
+        favoritesUiState = FavoriteCharactersViewState.Success(
+            createListOfCharactersForPreview()
+        ),
+        toggleFavoriteButton = {},
+        onItemClick = { _, _ -> }
+    )
 }

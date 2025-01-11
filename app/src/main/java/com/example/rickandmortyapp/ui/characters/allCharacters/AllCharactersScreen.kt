@@ -14,19 +14,26 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.rickandmortyapp.R
+import com.example.rickandmortyapp.domain.model.Character
+import com.example.rickandmortyapp.ui.characters.allCharacters.viewStates.AllCharactersViewState
+import com.example.rickandmortyapp.ui.characters.allCharacters.viewStates.FavoriteCharactersViewState
 import com.example.rickandmortyapp.ui.characters.components.AllCharactersLazyList
 import com.example.rickandmortyapp.ui.characters.components.FavoriteCharactersLazyList
 import com.example.rickandmortyapp.ui.characters.components.NavigationBarCustom
+import com.example.rickandmortyapp.ui.characters.utils.createListOfCharactersForPreview
+import kotlinx.coroutines.flow.flowOf
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllCharactersScreen(
     darkTheme: Boolean,
@@ -34,12 +41,41 @@ fun AllCharactersScreen(
     onCharacterClick: (Int, String) -> Unit
 ) {
     val viewModel: AllCharactersScreenViewModel = hiltViewModel()
-    val favoritesUiState by viewModel.favoritesUiState
-    val allCharactersPagingItems = viewModel.allCharactersFlow.collectAsLazyPagingItems()
+    val viewState by viewModel.viewState.collectAsState()
 
     LaunchedEffect(true) {
         viewModel.handleIntent(AllCharactersIntent.LoadCharacters)
     }
+
+    AllCharactersScreenContent(
+        darkTheme = darkTheme,
+        onThemeUpdated = onThemeUpdated,
+        onCharacterClick = onCharacterClick,
+        viewState = viewState,
+        onShowAllCharacters = {
+            viewModel.handleIntent(AllCharactersIntent.ShowAllCharacters)
+        },
+        onShowFavoriteCharacters = {
+            viewModel.handleIntent(AllCharactersIntent.ShowFavoritesCharacters)
+        },
+        onToggleFavorite = {
+            viewModel.handleIntent(AllCharactersIntent.ToggleFavorite(it))
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AllCharactersScreenContent(
+    darkTheme: Boolean,
+    onThemeUpdated: () -> Unit,
+    onCharacterClick: (Int, String) -> Unit,
+    viewState: AllCharactersViewState,
+    onShowAllCharacters: () -> Unit,
+    onShowFavoriteCharacters: () -> Unit,
+    onToggleFavorite: (Character) -> Unit,
+) {
+    val allCharactersPagingItems = viewState.allCharacters.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
@@ -74,11 +110,9 @@ fun AllCharactersScreen(
         },
         bottomBar = {
             NavigationBarCustom(
-                isShowingFavorites = viewModel.isShowingFavorites,
-                showAllCharacters = {
-                    viewModel.handleIntent(AllCharactersIntent.ShowAllCharacters) },
-                showFavoritesCharacters = {
-                    viewModel.handleIntent(AllCharactersIntent.ShowFavoritesCharacters) }
+                isShowingFavorites = viewState.isShowingFavorites,
+                showAllCharacters = onShowAllCharacters,
+                showFavoritesCharacters = onShowFavoriteCharacters
             )
         }
     ) { innerPadding ->
@@ -86,21 +120,41 @@ fun AllCharactersScreen(
             .padding(innerPadding)
             .fillMaxSize()
         ) {
-            if (viewModel.isShowingFavorites) {
+            if (viewState.isShowingFavorites) {
                 FavoriteCharactersLazyList(
-                    favoritesUiState = favoritesUiState,
-                    toggleFavoriteButton = {
-                        viewModel.handleIntent(AllCharactersIntent.ToggleFavorite(it)) },
+                    favoritesUiState = viewState.favoritesState,
+                    toggleFavoriteButton = onToggleFavorite,
                     onItemClick = onCharacterClick
                 )
             } else {
                 AllCharactersLazyList(
                     charactersPagingItems = allCharactersPagingItems,
-                    toggleFavoriteButton = {
-                        viewModel.handleIntent(AllCharactersIntent.ToggleFavorite(it)) },
+                    toggleFavoriteButton = onToggleFavorite,
                     onItemClick = onCharacterClick
                 )
             }
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun AllCharactersScreenPreview() {
+    AllCharactersScreenContent(
+        darkTheme = false,
+        onThemeUpdated = {},
+        onCharacterClick = { _, _ -> },
+        viewState = createViewStateForPreview(),
+        onShowAllCharacters = {},
+        onShowFavoriteCharacters = {},
+        onToggleFavorite = {}
+    )
+}
+
+private fun createViewStateForPreview() = AllCharactersViewState(
+    allCharacters = flowOf(PagingData.empty()),
+    favoritesState = FavoriteCharactersViewState.Success(
+        createListOfCharactersForPreview()
+    ),
+    isShowingFavorites = true
+)
