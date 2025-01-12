@@ -7,4 +7,6 @@ interface LocalDataSource {
     fun getFavorites(): Flow<List<CharacterEntity>>
     suspend fun addToFavorites(characterEntity: CharacterEntity)
     suspend fun removeFromFavorites(characterEntity: CharacterEntity)
+    suspend fun getCharacter(id: Int): CharacterEntity?
+    suspend fun updateCharacter(characterEntity: CharacterEntity)
 }

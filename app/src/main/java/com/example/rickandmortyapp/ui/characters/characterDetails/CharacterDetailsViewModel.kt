@@ -27,14 +27,14 @@ class CharacterDetailsViewModel @Inject constructor(
 
     private fun fetchCharacter(id: Int) {
         viewModelScope.launch {
-            charactersRepository.getCharacterData(id)
-                .onSuccess { character ->
+            charactersRepository.getCharacterDataFlow(id).collect { result ->
+                result.onSuccess { character ->
                     _viewState.value = CharacterViewState.Success(character)
                 }
-                .onFailure {
+                result.onFailure {
                     _viewState.value = CharacterViewState.Error
                 }
+            }
         }
     }
-
 }
