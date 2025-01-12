@@ -8,7 +8,12 @@ fun CharacterDTO.toCharacter(): Character {
     return Character(
         id = this.id,
         name = this.name,
-        imageUrl = this.image
+        imageUrl = this.image,
+        status = this.status,
+        species = this.species,
+        gender = this.gender,
+        origin = this.origin.name,
+        lastLocation = this.location.name
     )
 }
 
@@ -17,6 +22,11 @@ fun CharacterEntity.toCharacter(): Character {
         id = this.id.toInt(),
         name = this.name,
         imageUrl = this.imageUrl,
+        status = this.status,
+        species = this.species,
+        gender = this.gender,
+        origin = this.origin,
+        lastLocation = this.lastLocation,
         isFavorite = this.isFavorite
     )
 }
@@ -25,7 +35,12 @@ fun Character.toCharacterEntity(): CharacterEntity {
     return CharacterEntity(
         id = this.id.toLong(),
         name = this.name,
+        isFavorite = this.isFavorite,
         imageUrl = this.imageUrl,
-        isFavorite = this.isFavorite
+        status = this.status,
+        species = this.species,
+        gender = this.gender,
+        origin = this.origin,
+        lastLocation = this.lastLocation
     )
 }

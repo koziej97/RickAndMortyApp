@@ -10,5 +10,10 @@ fun createCharacterForPreview(id: Int = 1) = Character(
     id = id,
     name = "Rick Sanchez",
     imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
-    isFavorite = id % 2 == 0
+    isFavorite = id % 2 == 0,
+    status = "Alive",
+    species = "Human",
+    gender = "Male",
+    origin = "Earth (C-137)",
+    lastLocation = "Citadel of Ricks"
 )

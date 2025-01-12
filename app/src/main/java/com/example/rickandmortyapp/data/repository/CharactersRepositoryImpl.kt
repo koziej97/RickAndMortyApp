@@ -66,7 +66,10 @@ class CharactersRepositoryImpl @Inject constructor(
                 onSuccess = { remoteCharacter ->
                     if (localCharacter != remoteCharacter) {
                         if (localCharacter?.isFavorite == true) {
-                            localDataSource.updateCharacter(remoteCharacter.toCharacterEntity())
+                            val remoteCharacterEntity = remoteCharacter
+                                .copy(isFavorite = true)
+                                .toCharacterEntity()
+                            localDataSource.updateCharacter(remoteCharacterEntity)
                         }
                         emit(Result.success(remoteCharacter))
                     }
