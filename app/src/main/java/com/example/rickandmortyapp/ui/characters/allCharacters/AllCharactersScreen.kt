@@ -1,5 +1,7 @@
 package com.example.rickandmortyapp.ui.characters.allCharacters
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -120,19 +122,26 @@ private fun AllCharactersScreenContent(
             .padding(innerPadding)
             .fillMaxSize()
         ) {
-            if (viewState.isShowingFavorites) {
-                FavoriteCharactersLazyList(
-                    favoritesUiState = viewState.favoritesState,
-                    toggleFavoriteButton = onToggleFavorite,
-                    onItemClick = onCharacterClick
-                )
-            } else {
-                AllCharactersLazyList(
-                    charactersPagingItems = allCharactersPagingItems,
-                    toggleFavoriteButton = onToggleFavorite,
-                    onItemClick = onCharacterClick
-                )
+            Crossfade(
+                targetState = viewState.isShowingFavorites,
+                animationSpec = tween(durationMillis = 750),
+                label = ""
+            ) { isShowingFavorites ->
+                if (isShowingFavorites) {
+                    FavoriteCharactersLazyList(
+                        favoritesUiState = viewState.favoritesState,
+                        toggleFavoriteButton = onToggleFavorite,
+                        onItemClick = onCharacterClick
+                    )
+                } else {
+                    AllCharactersLazyList(
+                        charactersPagingItems = allCharactersPagingItems,
+                        toggleFavoriteButton = onToggleFavorite,
+                        onItemClick = onCharacterClick
+                    )
+                }
             }
+
         }
     }
 }
