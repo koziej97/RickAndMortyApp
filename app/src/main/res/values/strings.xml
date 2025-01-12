@@ -5,4 +5,11 @@
     <string name="retry">Retry</string>
     <string name="loading">Loading</string>
     <string name="no_favorites_characters_message">You haven\'t added any characters to your favorites. Please click the heart icon next to your favorite characters.</string>
+    <string name="species">Species</string>
+    <string name="gender">Gender</string>
+    <string name="origin">Origin</string>
+    <string name="last_known_location">Last known location</string>
+    <string name="alive">Alive</string>
+    <string name="dead">Dead</string>
+    <string name="unknown">Unknown</string>
 </resources>

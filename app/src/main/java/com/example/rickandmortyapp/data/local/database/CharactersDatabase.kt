@@ -20,7 +20,9 @@ abstract class CharactersDatabase: RoomDatabase() {
                     context.applicationContext,
                     CharactersDatabase::class.java,
                     "characters_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

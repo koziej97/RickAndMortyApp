@@ -29,7 +29,7 @@ fun ErrorMessage(
             text = message,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.weight(1f),
-            maxLines = 2
+            maxLines = 3
         )
         OutlinedButton(onClick = onClickRetry) {
             Text(text = stringResource(R.string.retry))

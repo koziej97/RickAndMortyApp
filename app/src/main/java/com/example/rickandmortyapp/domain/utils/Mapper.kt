@@ -3,13 +3,14 @@ package com.example.rickandmortyapp.domain.utils
 import com.example.rickandmortyapp.data.local.database.model.CharacterEntity
 import com.example.rickandmortyapp.data.remote.model.CharacterDTO
 import com.example.rickandmortyapp.domain.model.Character
+import com.example.rickandmortyapp.domain.model.Status
 
 fun CharacterDTO.toCharacter(): Character {
     return Character(
         id = this.id,
         name = this.name,
         imageUrl = this.image,
-        status = this.status,
+        status = Status.valueOf(this.status.uppercase()),
         species = this.species,
         gender = this.gender,
         origin = this.origin.name,
@@ -22,7 +23,7 @@ fun CharacterEntity.toCharacter(): Character {
         id = this.id.toInt(),
         name = this.name,
         imageUrl = this.imageUrl,
-        status = this.status,
+        status = Status.valueOf(this.status.uppercase()),
         species = this.species,
         gender = this.gender,
         origin = this.origin,
@@ -37,7 +38,7 @@ fun Character.toCharacterEntity(): CharacterEntity {
         name = this.name,
         isFavorite = this.isFavorite,
         imageUrl = this.imageUrl,
-        status = this.status,
+        status = this.status.toString(),
         species = this.species,
         gender = this.gender,
         origin = this.origin,
