@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
 
@@ -28,10 +29,16 @@ fun ErrorMessage(
             text = message,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.weight(1f),
-            maxLines = 2
+            maxLines = 3
         )
         OutlinedButton(onClick = onClickRetry) {
             Text(text = stringResource(R.string.retry))
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ErrorMessagePreview() {
+    ErrorMessage(message = "Error message", onClickRetry = {})
 }

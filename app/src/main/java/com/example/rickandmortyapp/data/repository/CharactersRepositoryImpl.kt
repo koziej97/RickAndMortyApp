@@ -1,5 +1,6 @@
 package com.example.rickandmortyapp.data.repository
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -11,6 +12,7 @@ import com.example.rickandmortyapp.domain.repository.CharactersRepository
 import com.example.rickandmortyapp.domain.utils.toCharacter
 import com.example.rickandmortyapp.domain.utils.toCharacterEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -52,4 +54,52 @@ class CharactersRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getCharacterDataFlow(id: Int): Flow<Result<Character>> = flow {
+        val localCharacter = localDataSource.getCharacter(id)?.toCharacter()
+        localCharacter?.let {
+            emit(Result.success(it))
+        }
+
+        try {
+            val remoteResult = fetchCharacterFromRemote(id)
+            remoteResult.fold(
+                onSuccess = { remoteCharacter ->
+                    if (localCharacter != remoteCharacter) {
+                        if (localCharacter?.isFavorite == true) {
+                            val remoteCharacterEntity = remoteCharacter
+                                .copy(isFavorite = true)
+                                .toCharacterEntity()
+                            localDataSource.updateCharacter(remoteCharacterEntity)
+                        }
+                        emit(Result.success(remoteCharacter))
+                    }
+                },
+                onFailure = { exception ->
+                    if (localCharacter == null) {
+                        emit(Result.failure(exception))
+                    } else {
+                        Log.e(
+                            "CharacterRepository",
+                            "Failed to fetch from remote", exception
+                        )
+                    }
+                }
+            )
+        } catch (e: Exception) {
+            if (localCharacter == null) {
+                emit(Result.failure(e))
+            } else {
+                emit(Result.success(localCharacter))
+            }
+        }
+    }
+
+    private suspend fun fetchCharacterFromRemote(id: Int): Result<Character> {
+        return try {
+            val remoteCharacter = remoteDataSource.fetchCharacter(id)
+            remoteCharacter.map { it.toCharacter() }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

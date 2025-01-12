@@ -18,4 +18,12 @@ class LocalDataSourceImpl @Inject constructor (private val charactersDao: Charac
     override suspend fun removeFromFavorites(characterEntity: CharacterEntity) {
         charactersDao.delete(characterEntity)
     }
+
+    override suspend fun getCharacter(id: Int): CharacterEntity? {
+        return charactersDao.getCharacter(id)
+    }
+
+    override suspend fun updateCharacter(characterEntity: CharacterEntity) {
+        charactersDao.update(characterEntity)
+    }
 }

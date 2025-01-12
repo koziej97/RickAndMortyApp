@@ -5,13 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.rickandmortyapp.ui.characters.CharactersScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.rickandmortyapp.ui.navigation.Navigation
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,23 +22,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             val isSystemInDarkTheme = isSystemInDarkTheme()
             var darkTheme by remember { mutableStateOf(isSystemInDarkTheme) }
+            val onThemeUpdated = { darkTheme = !darkTheme }
+
             RickAndMortyAppTheme(darkTheme = darkTheme) {
-                CharactersScreen(
+                val navController = rememberNavController()
+                Navigation(
+                    navController = navController,
                     darkTheme = darkTheme,
-                    onThemeUpdated = { darkTheme = !darkTheme }
+                    onThemeUpdated = onThemeUpdated
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainActivityPreview() {
-    RickAndMortyAppTheme(darkTheme = isSystemInDarkTheme()) {
-        CharactersScreen(
-            darkTheme = isSystemInDarkTheme(),
-            onThemeUpdated = { }
-        )
     }
 }
