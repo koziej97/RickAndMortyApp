@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class CharactersScreenTest {
+class ScreenTests {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -75,5 +75,21 @@ class CharactersScreenTest {
             .performClick()
 
         composeTestRule.onNodeWithText("Rick Sanchez").assertExists()
+    }
+
+    @Test
+    fun testOpeningCharacterDetailsScreen() {
+        composeTestRule.onNodeWithText("Rick and Morty Characters").assertExists()
+
+        composeTestRule.waitUntil(timeoutMillis = 5000) {
+            composeTestRule.onAllNodesWithText("Rick Sanchez").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        composeTestRule.onNodeWithText("Rick Sanchez", useUnmergedTree = true)
+            .performClick()
+
+        composeTestRule.waitUntil(timeoutMillis = 5000) {
+            composeTestRule.onAllNodesWithText("Origin: Earth (C-137)").fetchSemanticsNodes().isNotEmpty()
+        }
     }
 }
